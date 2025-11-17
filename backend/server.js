@@ -30,7 +30,7 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // CORS баптамасын орталықтандырдық
-const FRONT_ORIGIN = process.env.PUBLIC_APP_URL || "http://localhost:3000";
+const FRONT_ORIGIN = process.env.PUBLIC_APP_URL || "https://dentalchain-jj3v.vercel.app/clinics";
 
 app.use(
   cors({
