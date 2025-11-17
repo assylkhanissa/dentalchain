@@ -1,7 +1,8 @@
 // frontend/src/helpers/baseUrl.js
 
-export const API_BASE = "http://localhost:5001";
+export const API_BASE = "https://dentalchain.onrender.com";
 
+// Получение полного URL изображения
 export const getImageUrl = (imagePath) => {
   if (!imagePath) return "";
   if (/^https?:\/\//i.test(imagePath)) return imagePath;
@@ -9,4 +10,5 @@ export const getImageUrl = (imagePath) => {
   return `${API_BASE}/${imagePath}`;
 };
 
-export default getImageUrl;
+// Главный экспорт — API_BASE
+export default API_BASE;
