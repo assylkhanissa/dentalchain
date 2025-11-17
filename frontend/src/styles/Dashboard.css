@@ -1,0 +1,252 @@
+/* === PATIENT DASHBOARD (scoped) === */
+.patient-dashboard {
+  max-width: 880px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: Inter, Segoe UI, sans-serif;
+  color: #022b50;
+  background: #f9fbfd;
+}
+.patient-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 18px 25px;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 25px;
+}
+.patient-user-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.patient-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #00b4d8;
+  background: #f1f8ff;
+}
+.patient-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #023e8a;
+}
+.patient-logout-btn {
+  background: #efefef;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.patient-upload-card,
+.patient-gallery-card,
+.patient-appointments-section {
+  background: #fff;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 25px;
+}
+.patient-upload-card h3,
+.patient-gallery-card h3,
+.patient-appointments-section h3 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: #0077b6;
+  text-align: center;
+}
+.patient-upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+.patient-file-input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 90%;
+  max-width: 320px;
+  font-size: 14px;
+}
+.patient-upload-btn {
+  background: linear-gradient(90deg, #0077b6, #00b4d8);
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+.patient-upload-btn:hover {
+  transform: scale(1.05);
+  opacity: 0.95;
+}
+.patient-status-msg {
+  margin-top: 8px;
+  color: #0077b6;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* FIX: одна точка! */
+.patient-xray-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 14px;
+  margin-top: 15px;
+  justify-items: center;
+}
+.patient-xray-item {
+  width: 150px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s;
+  padding: 8px;
+  background: #fafbff;
+}
+.patient-xray-item:hover {
+  transform: scale(1.03);
+}
+.patient-xray-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.patient-no-images {
+  color: #777;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.patient-appointments-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+.patient-appointment-card {
+  background: #f9fcff;
+  border-radius: 10px;
+  padding: 14px;
+  border-left: 4px solid #00b4d8;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: 0.2s;
+}
+.patient-appointment-card:hover {
+  transform: translateY(-3px);
+}
+.patient-appointment-card h4 {
+  color: #023e8a;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+.patient-appointment-card p {
+  font-size: 13px;
+  color: #334155;
+  margin: 3px 0;
+}
+.patient-no-appointments {
+  color: #777;
+  text-align: center;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.patient-actions {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
+.patient-back-btn {
+  background: linear-gradient(90deg, #00b4d8, #0077b6);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 10px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+.patient-back-btn:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+.patient-xray-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.patient-xray-buttons .btn-download {
+  background: #0077b6;
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.patient-xray-buttons .btn-delete {
+  background: #d64545;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+/* контейнер галереи */
+.patient-xray-gallery {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+/* карточка одной рентген-картинки:
+   фиксируем ширину, центрируем контент */
+.patient-xray-item {
+  width: 200px; /* подстрой под желаемый размер */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* изображение занимает всю ширину карточки, не позволяет кнопкам уехать */
+.patient-xray-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+  margin: 0 0 8px 0;
+  object-fit: cover;
+}
+
+/* обёртка для кнопок — обязательно центрирует */
+.patient-xray-item .xray-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 6px;
+  box-sizing: border-box;
+}
+
+/* стиль самих кнопок — одинаковая минимальная ширина */
+.patient-xray-item .patient-upload-btn {
+  min-width: 96px;
+  padding: 8px 10px;
+  border-radius: 8px;
+}

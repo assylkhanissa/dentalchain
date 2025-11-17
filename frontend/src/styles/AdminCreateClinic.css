@@ -1,0 +1,139 @@
+.clinic-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 16px;
+  background: #f4f8fc;
+  min-height: 100vh;
+}
+
+.clinic-box {
+  background: #fff;
+  width: 100%;
+  max-width: 760px;
+  padding: 45px 55px;
+  border-radius: 18px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+}
+
+.clinic-box h2 {
+  text-align: center;
+  margin-bottom: 35px;
+  color: #0077b6;
+  font-size: 28px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.clinic-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.clinic-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.clinic-col {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+  font-size: 15px;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #d3dbe3;
+  border-radius: 10px;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #0077b6;
+  box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.15);
+  outline: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.image-preview {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.image-preview img {
+  max-width: 240px;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.clinic-btn {
+  background: linear-gradient(135deg, #0077b6, #0096c7);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-top: 10px;
+}
+
+.clinic-btn:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #0096c7, #00b4d8);
+}
+
+.clinic-msg {
+  margin-top: 15px;
+  font-weight: 600;
+  text-align: center;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.clinic-msg.success {
+  background: #e3f9e5;
+  color: #056608;
+}
+
+.clinic-msg.error {
+  background: #ffe4e4;
+  color: #a60000;
+}
+
+.admin-warning {
+  text-align: center;
+  margin-top: 100px;
+  font-size: 18px;
+  color: #a60000;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .clinic-row {
+    grid-template-columns: 1fr;
+  }
+}

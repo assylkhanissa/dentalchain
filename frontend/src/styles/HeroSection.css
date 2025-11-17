@@ -1,0 +1,98 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap");
+
+.hero {
+  background: linear-gradient(135deg, #0077b6, #00b4d8);
+  color: white;
+  text-align: center;
+  padding: 120px 20px;
+  font-family: "Montserrat", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Легкая волна */
+.hero::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  background: white;
+  clip-path: ellipse(70% 100% at 50% 100%);
+}
+
+.hero-content {
+  max-width: 800px;
+  z-index: 1;
+  animation: fadeInUp 1s ease;
+}
+
+.hero h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.hero h1 span {
+  color: #caf0f8;
+}
+
+.hero p {
+  font-size: 18px;
+  max-width: 700px;
+  margin: 0 auto 40px;
+  opacity: 0.95;
+}
+
+.hero-btn {
+  display: inline-block;
+  background-color: white;
+  color: #0077b6;
+  padding: 14px 36px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.hero-btn:hover {
+  background-color: #caf0f8;
+  color: #023e8a;
+  transform: translateY(-3px);
+}
+
+/* Анимация появления */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Адаптив */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 32px;
+  }
+
+  .hero p {
+    font-size: 16px;
+  }
+
+  .hero-btn {
+    padding: 12px 28px;
+    font-size: 15px;
+  }
+}

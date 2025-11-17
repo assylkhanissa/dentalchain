@@ -1,0 +1,228 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #00b4d8, #0077b6);
+  font-family: "Segoe UI", sans-serif;
+  padding: 20px;
+}
+
+/* Карточка */
+.auth-card {
+  background: #ffffff;
+  padding: 40px 45px;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  width: 380px;
+  max-width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-card h2 {
+  color: #023e8a;
+  font-size: 24px;
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+/* Форма */
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Поля ввода и select */
+.auth-card input,
+.auth-card select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #cfd8dc;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.2s ease-in-out;
+  box-sizing: border-box;
+}
+
+.auth-card input:focus,
+.auth-card select:focus {
+  outline: none;
+  border-color: #00b4d8;
+  box-shadow: 0 0 6px rgba(0, 180, 216, 0.3);
+}
+
+/* Кнопка */
+.auth-card button {
+  background-color: #0077b6;
+  color: #ffffff;
+  padding: 12px 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  width: 100%;
+  margin-top: 5px;
+}
+
+.auth-card button:hover {
+  background-color: #0096c7;
+  transform: translateY(-1px);
+}
+
+.auth-card button:disabled {
+  background-color: #8ecae6;
+  cursor: not-allowed;
+}
+
+/* Подпись и ссылки */
+.auth-card p {
+  margin-top: 18px;
+  font-size: 14px;
+  color: #333;
+}
+
+.auth-link {
+  color: #0077b6;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+/* Сообщения */
+.auth-card p:last-child {
+  font-weight: 600;
+  margin-top: 14px;
+}
+
+/* Адаптивность */
+@media (max-width: 480px) {
+  .auth-card {
+    width: 90%;
+    padding: 30px 25px;
+  }
+
+  .auth-card h2 {
+    font-size: 20px;
+  }
+
+  .auth-card input,
+  .auth-card select {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+}
+/* Подключите шрифт один раз в index.html или index.css:
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+*/
+:root {
+  --c1: #0077b6;
+  --c2: #00b4d8;
+  --text: #023e8a;
+}
+
+.auth2-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--c1), var(--c2));
+  padding: 24px;
+  font-family: "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Arial,
+    sans-serif;
+}
+
+.auth2-card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  padding: 28px 28px 22px;
+}
+
+.auth2-title {
+  margin: 0 0 14px;
+  text-align: center;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.auth2-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.auth2-input {
+  width: 100%;
+  border: 1px solid #d9e1ec;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 15px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.auth2-input:focus {
+  outline: none;
+  border-color: var(--c2);
+  box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.2);
+}
+
+.auth2-btn {
+  margin-top: 6px;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(90deg, var(--c1), var(--c2));
+  cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+.auth2-btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+.auth2-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.auth2-hint {
+  text-align: center;
+  margin: 14px 0 0;
+  color: #60708a;
+  font-size: 14px;
+}
+
+.auth2-link {
+  color: var(--c1);
+  font-weight: 600;
+  text-decoration: none;
+}
+.auth2-link:hover {
+  text-decoration: underline;
+}
+
+.auth2-msg {
+  margin-top: 10px;
+  text-align: center;
+  font-weight: 600;
+}
+.auth2-msg.ok {
+  color: #1e9e5a;
+}
+.auth2-msg.err {
+  color: #d64545;
+}

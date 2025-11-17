@@ -1,0 +1,149 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap");
+
+* {
+  font-family: "Montserrat", sans-serif;
+}
+
+.clinics-container {
+  padding: 60px 40px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.clinics-title {
+  text-align: center;
+  color: #023e8a;
+  font-size: 38px;
+  margin-bottom: 40px;
+  font-weight: 700;
+}
+
+.clinic-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
+}
+
+.clinic-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.clinic-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.clinic-img {
+  width: 100%;
+  height: 180px;
+  border-radius: 12px;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+
+.clinic-info {
+  text-align: left;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+.book-btn {
+  background: #00b4d8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  margin-top: 15px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-weight: 600;
+}
+
+.book-btn:hover {
+  background: #0077b6;
+}
+
+/* --- Модальное окно --- */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.modal-card {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.modal-card h2 {
+  color: #0077b6;
+  margin-bottom: 15px;
+}
+
+.modal-card label {
+  display: block;
+  margin: 12px 0;
+  color: #333;
+  font-weight: 500;
+}
+
+.modal-card input,
+.modal-card textarea {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.cancel-btn {
+  background: #ccc;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.cancel-btn:hover {
+  background: #bbb;
+}
+.clinic-map {
+  margin-top: 10px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+/* Карта стилі */
+.leaflet-container {
+  width: 100% !important;
+  height: 200px !important;
+  border-radius: 10px;
+  margin-top: 12px;
+  z-index: 1;
+}
+
+/* Карточка ішінде картаның шекарасы */
+.clinic-map {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Модаль ашылғанда арттағы карталар жабысып тұрмау үшін */
+.modal-bg .leaflet-container {
+  display: none;
+}

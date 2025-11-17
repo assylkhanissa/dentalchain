@@ -1,0 +1,87 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+
+.navbar {
+  font-family: "Montserrat", sans-serif;
+  background: linear-gradient(90deg, #0077b6, #0096c7);
+  padding: 15px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  font-size: 22px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.navbar-logo span {
+  margin-left: 8px;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 22px;
+}
+
+.navbar-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.navbar-links a:hover {
+  color: #caf0f8;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.navbar-email {
+  font-size: 14px;
+  opacity: 0.9;
+  line-height: 1;
+}
+
+.profile-btn,
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 0 16px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.profile-btn {
+  background-color: #00b4d8;
+  border: none;
+  color: white;
+}
+
+.profile-btn:hover {
+  background-color: #48cae4;
+  transform: translateY(-1px);
+}
+
+.logout-btn {
+  border: 1px solid white;
+  color: white;
+  background: transparent;
+}
+
+.logout-btn:hover {
+  background-color: white;
+  color: #0077b6;
+}

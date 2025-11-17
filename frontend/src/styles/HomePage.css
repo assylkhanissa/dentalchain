@@ -1,0 +1,236 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap");
+
+.home-container {
+  text-align: center;
+  padding: 80px 20px;
+  font-family: "Montserrat", sans-serif;
+  background: #f8fafc;
+  color: #023e8a;
+}
+
+.homepage-title {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.homepage-subtitle {
+  font-size: 18px;
+  color: #0077b6;
+  margin-bottom: 60px;
+}
+
+.homepage-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  margin-bottom: 80px;
+}
+
+.home-card {
+  background: white;
+  border-radius: 16px;
+  padding: 30px 20px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.home-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.home-icon {
+  font-size: 40px;
+  color: #00b4d8;
+  margin-bottom: 15px;
+}
+
+.home-card h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #03045e;
+}
+
+.home-card p {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* CTA секция */
+.cta-section {
+  background: linear-gradient(135deg, #0077b6, #00b4d8);
+  color: white;
+  padding: 80px 20px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.cta-section h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.cta-section p {
+  font-size: 16px;
+  margin-bottom: 30px;
+  color: #e0f7ff;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.cta-btn {
+  text-decoration: none;
+  padding: 12px 26px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.cta-btn.primary {
+  background-color: white;
+  color: #0077b6;
+}
+
+.cta-btn.primary:hover {
+  background-color: #caf0f8;
+}
+
+.cta-btn.secondary {
+  border: 2px solid white;
+  color: white;
+}
+
+.cta-btn.secondary:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* адаптив */
+@media (max-width: 600px) {
+  .home-container {
+    padding: 50px 15px;
+  }
+
+  .homepage-title {
+    font-size: 28px;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+  }
+
+  .cta-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+.mission-section {
+  background: white;
+  padding: 70px 20px;
+  border-radius: 20px;
+  margin-bottom: 80px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+.mission-section h2 {
+  font-size: 28px;
+  color: #03045e;
+  margin-bottom: 20px;
+}
+.mission-icons {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 25px;
+  flex-wrap: wrap;
+}
+.mission-icon {
+  font-size: 45px;
+  color: #00b4d8;
+  margin-bottom: 10px;
+}
+
+/* How it works */
+.how-section {
+  padding: 70px 20px;
+  background: #f0f9ff;
+  border-radius: 20px;
+  margin-bottom: 80px;
+}
+.how-section h2 {
+  font-size: 28px;
+  color: #03045e;
+  margin-bottom: 30px;
+}
+.how-steps {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+.how-step {
+  background: white;
+  border-radius: 14px;
+  padding: 25px;
+  width: 250px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+.how-step span {
+  background: #00b4d8;
+  color: white;
+  font-weight: 700;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+/* Testimonials */
+.testimonial-section {
+  background: #f8fafc;
+  padding: 70px 20px;
+  margin-bottom: 80px;
+}
+.testimonial-section h2 {
+  color: #03045e;
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+.testimonial-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+.testimonial-card {
+  background: white;
+  border-radius: 14px;
+  padding: 25px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+  font-style: italic;
+}
+.testimonial-card h4 {
+  margin-top: 10px;
+  color: #0077b6;
+  font-weight: 600;
+}
+
+/* Hover effects */
+.home-card,
+.how-step,
+.testimonial-card {
+  transition: transform 0.3s ease;
+}
+.home-card:hover,
+.how-step:hover,
+.testimonial-card:hover {
+  transform: translateY(-6px);
+}

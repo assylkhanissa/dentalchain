@@ -1,0 +1,45 @@
+/* frontend/src/styles/AdminFormTweaks.css */
+.admin-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(10, 25, 47, 0.06);
+}
+
+.admin-toolbar .input,
+.admin-card .input {
+  border: 1px solid #e6eef6;
+  background: #fbfdff;
+  padding: 11px 14px;
+  border-radius: 10px;
+}
+
+.admin-card .grid.cols-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* make file input and ownerpicker aligned */
+.admin-card input[type="file"] {
+  margin-top: 6px;
+}
+
+/* map preview box */
+.map-preview {
+  width: 100%;
+  height: 220px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e6eef6;
+  margin-top: 8px;
+}
+
+/* form buttons */
+.admin-card .btn {
+  background: linear-gradient(180deg, #0077b6, #006494);
+  color: white;
+  border-radius: 10px;
+  padding: 10px 14px;
+  border: none;
+}
