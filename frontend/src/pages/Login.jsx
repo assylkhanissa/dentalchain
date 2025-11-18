@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api from "../helpers/api"; // ← используем твой axios instance
+import api from "../helpers/api";
 import "../styles/AuthForm.css";
 
 const Login = () => {
@@ -19,18 +19,20 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // ОБЯЗАТЕЛЬНО ТОЛЬКО ТАК:
+      // ВАЖНО: используем api (axios instance с baseURL)
       const res = await api.post("/api/auth/login", form);
+      const data = res?.data || {};
 
-      const { token, user, message } = res.data || {};
+      const token = data.token;
+      const user = data.user;
 
-      if (token && user) {
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
-      }
+      // === Сохраняем токен ===
+      if (token) localStorage.setItem("token", token);
+      if (user) localStorage.setItem("user", JSON.stringify(user));
 
-      setMessage(message || "Сәтті кірдіңіз");
+      setMessage(data.message || "Сәтті кірдіңіз");
 
+      // малая задержка чтобы показать сообщение
       setTimeout(() => {
         if (user?.role === "admin") navigate("/admin");
         else if (user?.role === "owner") navigate("/owner/clinics");
@@ -39,7 +41,13 @@ const Login = () => {
 
     } catch (err) {
       console.error("LOGIN ERROR:", err);
-      setMessage(err.response?.data?.message || "Қате орын алды ❌");
+
+      const serverMsg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Қате орын алды ❌";
+
+      setMessage(serverMsg);
     } finally {
       setLoading(false);
     }
@@ -51,6 +59,7 @@ const Login = () => {
         <h2 className="auth2-title">🔒 Кіру</h2>
 
         <form onSubmit={handleSubmit} className="auth2-form">
+
           <input
             type="email"
             name="email"
