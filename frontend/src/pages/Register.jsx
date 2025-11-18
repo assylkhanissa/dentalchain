@@ -1,6 +1,7 @@
+// frontend/src/pages/Register.jsx
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import api from "../helpers/api"; // используем единый axios instance
 import "../styles/AuthForm.css";
 
 const Register = () => {
@@ -15,7 +16,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
@@ -24,42 +25,64 @@ const Register = () => {
     setLoading(true);
 
     try {
-      // ✅ Отправляем с фиксированной ролью "patient"
-      const regRes = await axios.post("/api/auth/register", {
+      // Отправляем регистрацию (фиксируем роль patient)
+      const regRes = await api.post("/api/auth/register", {
         ...form,
         role: "patient",
       });
 
-      setMessage(regRes.data?.message || "Тіркелу сәтті өтті ✅");
+      const regData = regRes?.data || {};
+      setMessage(regData.message || "Тіркелу сәтті өтті ✅");
 
-      // ✅ Авто-логин
-      const loginRes = await axios.post("/api/auth/login", {
-        email: form.email,
-        password: form.password,
-      });
+      // Авто-логин после успешной регистрации
+      try {
+        const loginRes = await api.post("/api/auth/login", {
+          email: form.email,
+          password: form.password,
+        });
 
-      const { token, user, message: loginMsg } = loginRes.data || {};
+        const loginData = loginRes?.data || {};
+        const token = loginData.token;
+        const user = loginData.user;
 
-      if (token && user) {
-        localStorage.setItem("token", token);
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            id: user.id,
-            fullName: user.fullName,
-            role: user.role,
-            email: user.email,
-          })
+        if (token) localStorage.setItem("token", token);
+        if (user)
+          localStorage.setItem(
+            "user",
+            JSON.stringify({
+              id: user._id || user.id || user?.id,
+              fullName: user.fullName || user.name || "",
+              role: user.role || "patient",
+              email: user.email || form.email,
+            })
+          );
+
+        setMessage(loginData.message || "Сәтті кірдіңіз ✅");
+
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 450);
+      } catch (loginErr) {
+        // Если авто-логин не прошёл — показываем сообщение, но ничего критичного
+        console.warn("Auto-login failed:", loginErr);
+        setMessage(
+          (loginErr?.response?.data?.message || "Авто-кіру мүмкін болмады") +
+            " — Кіру үшін жүйеге қайта кіріңіз."
         );
+        // Если токен всё же пришёл в рег ответ, сохраним
+        if (regData.token) {
+          localStorage.setItem("token", regData.token);
+          if (regData.user) localStorage.setItem("user", JSON.stringify(regData.user));
+          setTimeout(() => navigate("/dashboard"), 450);
+        }
       }
-
-      setMessage(loginMsg || "Сәтті кірдіңіз ✅");
-
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 600);
     } catch (err) {
-      setMessage(err.response?.data?.message || "Қате орын алды ❌");
+      console.error("REGISTER ERROR:", err);
+      const serverMsg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Қате орын алды ❌";
+      setMessage(serverMsg);
     } finally {
       setLoading(false);
     }
@@ -113,7 +136,7 @@ const Register = () => {
         {message && (
           <p
             style={{
-              color: /қате|❌/i.test(message) ? "red" : "green",
+              color: /қате|❌|error|invalid/i.test(message) ? "red" : "green",
               fontWeight: "bold",
               marginTop: "10px",
             }}
