@@ -42,7 +42,6 @@ const Clinics = () => {
   const [form, setForm] = useState({ date: "", time: "", note: "" });
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
-  const token = localStorage.getItem("token");
 
   // Утилита: попробовать достать [lat, lng] из разных возможных форматов
   const getLatLng = (clinic) => {
@@ -95,6 +94,7 @@ const Clinics = () => {
       })
       .catch((err) => {
         console.error("Clinics load error:", err);
+        alert("Ошибка загрузки клиник — см. консоль");
       });
     return () => {
       mounted = false;
@@ -116,29 +116,34 @@ const Clinics = () => {
 
   const submitBooking = async (e) => {
     e.preventDefault();
-    if (!selectedClinic) return;
-    const dateTime = new Date(`${form.date}T${form.time}:00`);
+    if (!selectedClinic) return alert("Клиника не выбрана");
+
+    if (!form.date || !form.time) {
+      return alert("Толығымен күн мен уақытты таңдаңыз");
+    }
+
+    // формируем ISO строку (локальное время)
+    const dateTimeString = `${form.date}T${form.time}:00`;
+    const dateObj = new Date(dateTimeString);
+    if (isNaN(dateObj.getTime())) {
+      return alert("Невалидная дата/время");
+    }
 
     try {
+      // ВАЖНО: бек ожидает поле "clinic" (id) и dateTime
       const payload = {
-        clinicId: selectedClinic._id || selectedClinic.id,
-        // patient поле не обязательно: бек использует req.user.id, но можно оставить
-        patient: user?._id || user?.id,
-        dateTime: dateTime.toISOString(), // передаём ISO строку
-        note: form.note,
+        clinic: selectedClinic._id || selectedClinic.id,
+        dateTime: dateObj.toISOString(),
+        note: form.note || "",
       };
 
       console.log("Booking payload:", payload);
 
-      const res = await api.post("/api/appointments", payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      const res = await api.post("/api/appointments", payload);
       alert(res.data?.message || "Өтініш сәтті жіберілді");
       closeModal();
     } catch (err) {
       console.error("Booking error:", err);
-      // если сервер вернул тело с сообщением — покажем его
       const serverMsg = err.response?.data?.message || err.message;
       alert(serverMsg || "Қате орын алды");
     }
@@ -163,9 +168,7 @@ const Clinics = () => {
             >
               <img
                 src={
-                  clinic.image
-                    ? getImageUrl(clinic.image)
-                    : "/default-clinic.jpg"
+                  clinic.image ? getImageUrl(clinic.image) : "/default-clinic.jpg"
                 }
                 alt={clinic.name}
                 className="clinic-img"
@@ -198,13 +201,9 @@ const Clinics = () => {
                   <Marker position={center} icon={clinicIcon}>
                     <Popup>
                       <strong>{clinic.name}</strong>
+                      <div style={{ marginTop: 6 }}>{clinic.address || "—"}</div>
                       <div style={{ marginTop: 6 }}>
-                        {clinic.address || "—"}
-                      </div>
-                      <div style={{ marginTop: 6 }}>
-                        <a href={`tel:${clinic.phone || ""}`}>
-                          {clinic.phone || ""}
-                        </a>
+                        <a href={`tel:${clinic.phone || ""}`}>{clinic.phone || ""}</a>
                       </div>
                     </Popup>
                   </Marker>
@@ -212,10 +211,7 @@ const Clinics = () => {
               </div>
 
               <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
-                <button
-                  className="book-btn"
-                  onClick={() => onBookClick(clinic)}
-                >
+                <button className="book-btn" onClick={() => onBookClick(clinic)}>
                   Жазылу
                 </button>
               </div>
@@ -278,11 +274,7 @@ const Clinics = () => {
                   <button type="submit" className="book-btn">
                     Жіберу
                   </button>
-                  <button
-                    type="button"
-                    className="cancel-btn"
-                    onClick={closeModal}
-                  >
+                  <button type="button" className="cancel-btn" onClick={closeModal}>
                     Болдырмау
                   </button>
                 </div>
