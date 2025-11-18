@@ -3,60 +3,54 @@ import axios from "axios";
 
 /**
  * API_BASE
- * Указывайте в окружении REACT_APP_API_URL без завершающего слэша, например:
+ * Указывайте REACT_APP_API_URL без завершающего слэша:
  * REACT_APP_API_URL=https://dentalchain.onrender.com
- *
- * Локально оставляем http://localhost:5001
  */
 const raw = process.env.REACT_APP_API_URL || "http://localhost:5001";
 const API_BASE = raw.endsWith("/") ? raw.slice(0, -1) : raw;
 
-// создаём инстанс с разумным таймаутом
+// создаём axios instance
 const instance = axios.create({
   baseURL: API_BASE,
-  timeout: 30000, // 30s
+  timeout: 30000,
   headers: { "Content-Type": "application/json" },
-  withCredentials: false,
+
+  // ОБЯЗАТЕЛЬНО for CORS
+  withCredentials: true,
 });
 
-// Автоматически добавлять токен в заголовки
+// Добавляем токен в заголовки
 instance.interceptors.request.use(
   (config) => {
-    try {
-      const token = localStorage.getItem("token");
-      if (token) {
-        config.headers = config.headers || {};
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    } catch (e) {
-      // ignore
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
   (err) => Promise.reject(err)
 );
 
-// Удобный единый обработчик ошибок (можно расширить)
+// Глобальный обработчик ошибок
 instance.interceptors.response.use(
   (res) => res,
   (err) => {
-    // Для дебага — печатаем подробно
     console.error("[API] error:", {
       message: err.message,
       code: err.code,
       status: err.response?.status,
       url: err.config?.url,
       method: err.config?.method,
+      data: err.response?.data,
     });
     return Promise.reject(err);
   }
 );
 
-// Утилита возвращающая заголовки авторизации (если нужно)
 export const authHeaders = () => {
   const token = localStorage.getItem("token");
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-// default экспорт инстанса
 export default instance;
