@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios, { authHeaders } from "../helpers/api";
+import api, { authHeaders } from "../helpers/api";
 import { motion } from "framer-motion";
 import { FaClinicMedical, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
 
@@ -10,10 +10,20 @@ const OwnerClinics = () => {
 
   useEffect(() => {
     if (!user || user.role !== "owner") return;
-    axios
-      .get("/api/clinics/owner/mine/list", { headers: authHeaders() })
-      .then((res) => setList(res.data || []))
-      .catch((err) => console.error(err.response?.data || err));
+
+    const load = async () => {
+      try {
+        const res = await api.get("/api/clinics/owner/mine/list", {
+          headers: authHeaders(),
+        });
+        setList(res.data || []);
+      } catch (err) {
+        console.error("[OwnerClinics] load error:", err.response?.data || err);
+        setList([]);
+      }
+    };
+
+    load();
   }, [user]);
 
   if (!user || user.role !== "owner") {

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { authHeaders } from "../helpers/api";
+import api, { authHeaders } from "../helpers/api";
 import { motion } from "framer-motion";
 import {
   FaUser,
@@ -27,10 +26,15 @@ const OwnerAppointments = () => {
   }, []);
 
   const loadData = async () => {
-    const res = await axios.get("/api/appointments/owner/mine", {
-      headers: authHeaders(),
-    });
-    setList(res.data || []);
+    try {
+      const res = await api.get("/api/appointments/owner/mine", {
+        headers: authHeaders(),
+      });
+      setList(res.data || []);
+    } catch (err) {
+      console.error("[OwnerAppointments] load error:", err.response?.data || err);
+      setList([]);
+    }
   };
 
   const openEdit = (appt) => {
@@ -56,35 +60,40 @@ const OwnerAppointments = () => {
   };
 
   const finalize = async (id) => {
-    await axios.patch(
-      `/api/appointments/${id}/done`,
-      {
-        performedWork: form.performedWork,
-        price: form.price ? Number(form.price) : undefined,
-        doctorName: form.doctorName,
-        tooth: form.tooth,
-        recommendations: form.recommendations,
-      },
-      { headers: authHeaders() }
-    );
+    try {
+      await api.patch(
+        `/api/appointments/${id}/done`,
+        {
+          performedWork: form.performedWork,
+          price: form.price ? Number(form.price) : undefined,
+          doctorName: form.doctorName,
+          tooth: form.tooth,
+          recommendations: form.recommendations,
+        },
+        { headers: authHeaders() }
+      );
 
-    setList((prev) =>
-      prev.map((a) =>
-        a._id === id
-          ? {
-              ...a,
-              performedWork: form.performedWork,
-              price: form.price ? Number(form.price) : a.price,
-              doctorName: form.doctorName,
-              tooth: form.tooth,
-              recommendations: form.recommendations,
-              status: "done",
-              completedAt: new Date().toISOString(),
-            }
-          : a
-      )
-    );
-    cancelEdit();
+      setList((prev) =>
+        prev.map((a) =>
+          a._id === id
+            ? {
+                ...a,
+                performedWork: form.performedWork,
+                price: form.price ? Number(form.price) : a.price,
+                doctorName: form.doctorName,
+                tooth: form.tooth,
+                recommendations: form.recommendations,
+                status: "done",
+                completedAt: new Date().toISOString(),
+              }
+            : a
+        )
+      );
+      cancelEdit();
+    } catch (err) {
+      console.error("[OwnerAppointments] finalize error:", err.response?.data || err);
+      alert(err.response?.data?.message || "Ошибка при сохранении");
+    }
   };
 
   return (
@@ -178,27 +187,17 @@ const OwnerAppointments = () => {
                 </div>
 
                 <p style={{ color: "#333", fontSize: "15px", margin: "4px 0" }}>
-                  <FaCalendarAlt
-                    style={{ color: "#0077b6", marginRight: "6px" }}
-                  />
+                  <FaCalendarAlt style={{ color: "#0077b6", marginRight: "6px" }} />
                   {new Date(a.dateTime).toLocaleString("kk-KZ")}
                 </p>
 
-                <p
-                  style={{
-                    color: statusColor,
-                    fontWeight: "600",
-                    marginTop: "8px",
-                  }}
-                >
+                <p style={{ color: statusColor, fontWeight: "600", marginTop: "8px" }}>
                   Статус: {a.status}
                 </p>
 
                 {a.doctorName && (
                   <p>
-                    <FaStethoscope
-                      style={{ color: "#00b4d8", marginRight: "6px" }}
-                    />
+                    <FaStethoscope style={{ color: "#00b4d8", marginRight: "6px" }} />
                     Дәрігер: {a.doctorName}
                   </p>
                 )}
@@ -211,17 +210,13 @@ const OwnerAppointments = () => {
                 {a.performedWork && <p>Жұмыс: {a.performedWork}</p>}
                 {typeof a.price === "number" && (
                   <p>
-                    <FaMoneyBillWave
-                      style={{ color: "#06d6a0", marginRight: "6px" }}
-                    />
+                    <FaMoneyBillWave style={{ color: "#06d6a0", marginRight: "6px" }} />
                     Баға: {a.price} ₸
                   </p>
                 )}
                 {a.recommendations && (
                   <p>
-                    <FaRegStickyNote
-                      style={{ color: "#0077b6", marginRight: "6px" }}
-                    />
+                    <FaRegStickyNote style={{ color: "#0077b6", marginRight: "6px" }} />
                     Ұсыныстар: {a.recommendations}
                   </p>
                 )}
@@ -244,86 +239,45 @@ const OwnerAppointments = () => {
                 )}
 
                 {isEditing && (
-                  <div
-                    style={{ marginTop: "16px", display: "grid", gap: "10px" }}
-                  >
+                  <div style={{ marginTop: "16px", display: "grid", gap: "10px" }}>
                     <input
                       placeholder="Имя врача"
                       value={form.doctorName}
-                      onChange={(e) =>
-                        setForm((p) => ({ ...p, doctorName: e.target.value }))
-                      }
+                      onChange={(e) => setForm((p) => ({ ...p, doctorName: e.target.value }))}
                       style={inputStyle}
                     />
                     <input
                       placeholder="Зуб (16, 27)"
                       value={form.tooth}
-                      onChange={(e) =>
-                        setForm((p) => ({ ...p, tooth: e.target.value }))
-                      }
+                      onChange={(e) => setForm((p) => ({ ...p, tooth: e.target.value }))}
                       style={inputStyle}
                     />
                     <input
                       placeholder="Атқарылған жұмыс"
                       value={form.performedWork}
-                      onChange={(e) =>
-                        setForm((p) => ({
-                          ...p,
-                          performedWork: e.target.value,
-                        }))
-                      }
+                      onChange={(e) => setForm((p) => ({ ...p, performedWork: e.target.value }))}
                       style={inputStyle}
                     />
                     <input
                       type="number"
                       placeholder="Баға (₸)"
                       value={form.price}
-                      onChange={(e) =>
-                        setForm((p) => ({ ...p, price: e.target.value }))
-                      }
+                      onChange={(e) => setForm((p) => ({ ...p, price: e.target.value }))}
                       style={inputStyle}
                     />
                     <textarea
                       placeholder="Ұсыныстар"
                       value={form.recommendations}
-                      onChange={(e) =>
-                        setForm((p) => ({
-                          ...p,
-                          recommendations: e.target.value,
-                        }))
-                      }
+                      onChange={(e) => setForm((p) => ({ ...p, recommendations: e.target.value }))}
                       rows={3}
                       style={{ ...inputStyle, resize: "none" }}
                     />
 
                     <div style={{ display: "flex", gap: "10px" }}>
-                      <button
-                        onClick={() => finalize(a._id)}
-                        style={{
-                          flex: 1,
-                          background: "#06d6a0",
-                          color: "white",
-                          border: "none",
-                          padding: "10px",
-                          borderRadius: "8px",
-                          cursor: "pointer",
-                          fontWeight: "600",
-                        }}
-                      >
+                      <button onClick={() => finalize(a._id)} style={finalizeBtnStyle}>
                         ✅ Аяқтау
                       </button>
-                      <button
-                        onClick={cancelEdit}
-                        style={{
-                          flex: 1,
-                          background: "#adb5bd",
-                          color: "white",
-                          border: "none",
-                          padding: "10px",
-                          borderRadius: "8px",
-                          cursor: "pointer",
-                        }}
-                      >
+                      <button onClick={cancelEdit} style={cancelBtnStyle}>
                         ❌ Болдырмау
                       </button>
                     </div>
@@ -345,6 +299,27 @@ const inputStyle = {
   fontFamily: "inherit",
   fontSize: "14px",
   outline: "none",
+};
+
+const finalizeBtnStyle = {
+  flex: 1,
+  background: "#06d6a0",
+  color: "white",
+  border: "none",
+  padding: "10px",
+  borderRadius: "8px",
+  cursor: "pointer",
+  fontWeight: "600",
+};
+
+const cancelBtnStyle = {
+  flex: 1,
+  background: "#adb5bd",
+  color: "white",
+  border: "none",
+  padding: "10px",
+  borderRadius: "8px",
+  cursor: "pointer",
 };
 
 export default OwnerAppointments;
