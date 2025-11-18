@@ -1,36 +1,44 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-import "../styles/AuthForm.css"; // важно: путь верный
+import api from "../helpers/api"; // ← используем твой axios instance
+import "../styles/AuthForm.css";
 
 const Login = () => {
   const navigate = useNavigate();
+
   const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) =>
-    setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
     setLoading(true);
+
     try {
-      const res = await axios.post("/api/auth/login", form);
+      // ОБЯЗАТЕЛЬНО ТОЛЬКО ТАК:
+      const res = await api.post("/api/auth/login", form);
+
       const { token, user, message } = res.data || {};
+
       if (token && user) {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
       }
-      setMessage(message || "Сәтті кірдіңіз ✅");
+
+      setMessage(message || "Сәтті кірдіңіз");
 
       setTimeout(() => {
         if (user?.role === "admin") navigate("/admin");
         else if (user?.role === "owner") navigate("/owner/clinics");
         else navigate("/dashboard");
-      }, 400);
+      }, 300);
+
     } catch (err) {
+      console.error("LOGIN ERROR:", err);
       setMessage(err.response?.data?.message || "Қате орын алды ❌");
     } finally {
       setLoading(false);
@@ -52,6 +60,7 @@ const Login = () => {
             onChange={handleChange}
             required
           />
+
           <input
             type="password"
             name="password"
@@ -61,6 +70,7 @@ const Login = () => {
             onChange={handleChange}
             required
           />
+
           <button type="submit" className="auth2-btn" disabled={loading}>
             {loading ? "Жүктелуде..." : "Кіру"}
           </button>
