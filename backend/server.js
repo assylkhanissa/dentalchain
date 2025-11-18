@@ -32,7 +32,7 @@ const PORT = process.env.PORT || 5001;
  *   PUBLIC_APP_URL=https://dentalchain-jj3v.vercel.app
  *   PUBLIC_APP_URL=https://dentalchain-jj3v.vercel.app,https://staging.example.com
  *
- * IMPORTANT: do NOT include paths (like /api/clinics) — only origin (scheme + host + optional port).
+ * IMPORTANT: use only origins (scheme + host + optional port), do NOT include paths.
  */
 const rawPublic = process.env.PUBLIC_APP_URL || "";
 const FRONT_ORIGINS = rawPublic
@@ -47,9 +47,9 @@ console.log("CORS: allowed FRONT_ORIGINS:", FRONT_ORIGINS);
 // cors options with dynamic origin check
 const corsOptions = {
   origin: function (origin, callback) {
-    // origin === undefined for same-origin requests (e.g., curl without Origin)
+    // origin === undefined for non-browser tools (curl/postman) or same-origin requests
     if (!origin) {
-      // allow non-browser tools or same-origin
+      // allow non-browser requests
       return callback(null, true);
     }
 
@@ -76,11 +76,10 @@ const corsOptions = {
 // apply CORS middleware
 app.use(cors(corsOptions));
 
-// quick middleware to log origin for debug
+// quick middleware to log origin for debug (can remove later)
 app.use((req, res, next) => {
   const origin = req.header("Origin");
   if (origin) {
-    // small log to help debug CORS problems (can be removed later)
     console.log("[CORS-DEBUG] request Origin:", origin, "url:", req.originalUrl);
   }
   next();
@@ -118,6 +117,7 @@ if (!MONGO_URI) {
 } else {
   mongoose
     .connect(MONGO_URI, {
+      // current driver ignores these options but leaving for backwards compatibility logs
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })
@@ -138,7 +138,8 @@ app.use((req, res) => {
 // глобальный обработчик ошибок (включая CORS ошибку от cors())
 app.use((err, req, res, next) => {
   console.error("Server error:", err && (err.message || err));
-  if (err && err.message && err.message.indexOf("CORS") !== -1) {
+  // коррекция: если ошибка от CORS middleware — вернём 403 и сообщение
+  if (err && err.message && err.message.indexOf("Not allowed by CORS") !== -1) {
     return res.status(403).json({ message: "CORS blocked", detail: err.message });
   }
   res.status(500).json({ message: "Server error", detail: err?.message || err });

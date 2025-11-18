@@ -2,33 +2,34 @@
 import axios from "axios";
 
 /**
- * Базовый URL API берём из переменных окружения (REACT_APP_API_URL).
- * Если не задан — пробуем production URL (render/vercel). По умолчанию пусто (тогда используются относительные /api в dev через proxy).
+ * API_BASE
+ * Указывайте в окружении REACT_APP_API_URL без завершающего слэша, например:
+ * REACT_APP_API_URL=https://dentalchain.onrender.com
+ *
+ * Локально оставляем http://localhost:5001
  */
-const RAW_API = process.env.REACT_APP_API_URL || "https://dentalchain.onrender.com";
-// убираем завершающие слеши, чтобы baseURL был аккуратно сформирован
-const API_BASE = RAW_API.replace(/\/+$/, "");
+const raw = process.env.REACT_APP_API_URL || "http://localhost:5001";
+const API_BASE = raw.endsWith("/") ? raw.slice(0, -1) : raw;
 
-// создаём инстанс с увеличенным таймаутом (60s)
+// создаём инстанс с разумным таймаутом
 const instance = axios.create({
-  baseURL: API_BASE || undefined, // если пусто — axios будет использовать относительные пути
-  timeout: 60000,
+  baseURL: API_BASE,
+  timeout: 30000, // 30s
   headers: { "Content-Type": "application/json" },
   withCredentials: false,
 });
 
-// Автоматически добавлять токен в заголовки (не перезаписываем другие заголовки)
+// Автоматически добавлять токен в заголовки
 instance.interceptors.request.use(
   (config) => {
     try {
       const token = localStorage.getItem("token");
-      config.headers = config.headers || {};
-      if (token && !config.headers.Authorization) {
+      if (token) {
+        config.headers = config.headers || {};
         config.headers.Authorization = `Bearer ${token}`;
       }
     } catch (e) {
       // ignore
-      // console.warn("auth interceptor error", e);
     }
     return config;
   },
@@ -39,22 +40,23 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (res) => res,
   (err) => {
+    // Для дебага — печатаем подробно
     console.error("[API] error:", {
-      message: err?.message,
-      code: err?.code,
-      status: err?.response?.status,
-      url: err?.config?.url,
+      message: err.message,
+      code: err.code,
+      status: err.response?.status,
+      url: err.config?.url,
+      method: err.config?.method,
     });
-
-    // Можно показывать уведомление пользователю здесь, если нужно.
     return Promise.reject(err);
   }
 );
 
-// Доп. помощник — возвращает заголовки авторизации (используется в некоторых компонентах)
+// Утилита возвращающая заголовки авторизации (если нужно)
 export const authHeaders = () => {
   const token = localStorage.getItem("token");
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
+// default экспорт инстанса
 export default instance;
