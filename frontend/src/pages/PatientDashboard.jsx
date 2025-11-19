@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.css";
 
-const API = "http://localhost:5001";
+const API = "https://dentalchain.onrender.com";
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
