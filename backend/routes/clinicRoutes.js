@@ -31,15 +31,15 @@ const parseLocation = (body) => {
       if (typeof body.location === "string") {
         const parsed = JSON.parse(body.location);
         if (
-          parsed &&
-          typeof parsed.lat === "number" &&
-          typeof parsed.lng === "number"
+            parsed &&
+            typeof parsed.lat === "number" &&
+            typeof parsed.lng === "number"
         )
           return parsed;
       } else if (
-        typeof body.location === "object" &&
-        typeof body.location.lat === "number" &&
-        typeof body.location.lng === "number"
+          typeof body.location === "object" &&
+          typeof body.location.lat === "number" &&
+          typeof body.location.lng === "number"
       ) {
         return body.location;
       }
@@ -56,11 +56,11 @@ const parseLocation = (body) => {
 };
 
 /** ========== OWNER: өз клиникаларының тізімі ========== */
-router.get("/owner/mine/list", auth, requireRole("owner"), async (req, res) => {
+router.get("/owner/mine/list", auth('owner') , async (req, res) => {
   try {
     const clinics = await Clinic.find({ owner: req.user.id })
-      .select("-__v")
-      .populate("owner", "fullName email");
+        .select("-__v")
+        .populate("owner", "fullName email");
     res.json(clinics);
   } catch (error) {
     res.status(500).json({ message: "Қате орын алды", error: error.message });
@@ -68,11 +68,11 @@ router.get("/owner/mine/list", auth, requireRole("owner"), async (req, res) => {
 });
 
 /** ========== ✅ КЛИНИКА: өзіне тіркелген пациенттердің тізімі ========== */
-router.get("/patients", auth, requireRole("clinic"), async (req, res) => {
+router.get("/patients", auth('clinic'), async (req, res) => {
   try {
     const appointments = await Appointment.find({ clinic: req.user.id })
-      .populate("patient", "fullName email")
-      .sort({ dateTime: -1 });
+        .populate("patient", "fullName email")
+        .sort({ dateTime: -1 });
 
     if (!appointments.length) {
       return res.json([]);
@@ -99,8 +99,8 @@ router.get("/patients", auth, requireRole("clinic"), async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const clinics = await Clinic.find()
-      .select("-__v")
-      .populate("owner", "fullName email role");
+        .select("-__v")
+        .populate("owner", "fullName email role");
     res.json(clinics);
   } catch (error) {
     res.status(500).json({ message: "Қате орын алды", error: error.message });
@@ -111,8 +111,8 @@ router.get("/", async (req, res) => {
 router.get("/:email", async (req, res) => {
   try {
     const clinic = await Clinic.findOne({ email: req.params.email }).populate(
-      "owner",
-      "fullName email role"
+        "owner",
+        "fullName email role"
     );
     if (!clinic) return res.status(404).json({ message: "Клиника табылмады" });
     res.json(clinic);
@@ -123,131 +123,129 @@ router.get("/:email", async (req, res) => {
 
 /** ========== ADMIN: жаңа клиника қосу ========== */
 router.post(
-  "/",
-  auth,
-  requireRole("admin"),
-  upload.single("image"),
-  async (req, res) => {
-    try {
-      const {
-        name,
-        email,
-        address,
-        phone,
-        description,
-        imageUrl,
-        ownerEmail,
-        ownerFullName,
-      } = req.body;
+    "/",
+    auth('owner'),
+    upload.single("image"),
+    async (req, res) => {
+      try {
+        const {
+          name,
+          email,
+          address,
+          phone,
+          description,
+          imageUrl,
+          ownerEmail,
+          ownerFullName,
+        } = req.body;
 
-      if (!name || !email || !ownerEmail) {
-        return res.status(400).json({
-          message: "name, email және ownerEmail қажет ❌",
+        if (!name || !email || !ownerEmail) {
+          return res.status(400).json({
+            message: "name, email және ownerEmail қажет ❌",
+          });
+        }
+
+        // Email тексеру
+        const existingClinic = await Clinic.findOne({ email });
+        if (existingClinic) {
+          return res
+              .status(400)
+              .json({ message: "Бұл клиника email тіркелген ❌" });
+        }
+
+        // Владелец (owner) табу/жасау
+        let owner = await User.findOne({ email: ownerEmail });
+        let tempPass = null;
+
+        if (!owner) {
+          tempPass = Math.random().toString(36).slice(-8);
+          const hashed = await bcrypt.hash(tempPass, 10);
+          owner = await User.create({
+            role: "owner",
+            fullName: ownerFullName || "Clinic Owner",
+            email: ownerEmail,
+            password: hashed,
+          });
+        } else if (owner.role !== "owner") {
+          return res.status(400).json({
+            message: "Бұл email иесі рөлімен тіркелмеген ❌",
+          });
+        }
+
+        // Фото
+        let image = "";
+        if (imageUrl) image = imageUrl;
+        if (req.file) image = /uploads/clinics/${req.file.filename};
+
+        // Парсим координаты
+        const location = parseLocation(req.body);
+
+        // Клиника жасау
+        const clinic = await Clinic.create({
+          name,
+          email,
+          address,
+          phone,
+          description,
+          image,
+          owner: owner._id,
+          location,
         });
-      }
 
-      // Email тексеру
-      const existingClinic = await Clinic.findOne({ email });
-      if (existingClinic) {
-        return res
-          .status(400)
-          .json({ message: "Бұл клиника email тіркелген ❌" });
-      }
-
-      // Владелец (owner) табу/жасау
-      let owner = await User.findOne({ email: ownerEmail });
-      let tempPass = null;
-
-      if (!owner) {
-        tempPass = Math.random().toString(36).slice(-8);
-        const hashed = await bcrypt.hash(tempPass, 10);
-        owner = await User.create({
-          role: "owner",
-          fullName: ownerFullName || "Clinic Owner",
-          email: ownerEmail,
-          password: hashed,
+        res.status(201).json({
+          message: "✅ Клиника құрылды",
+          clinic,
+          ownerTempPassword: tempPass || null,
         });
-      } else if (owner.role !== "owner") {
-        return res.status(400).json({
-          message: "Бұл email иесі рөлімен тіркелмеген ❌",
-        });
+      } catch (error) {
+        console.error("CREATE CLINIC ERROR:", error);
+        res
+            .status(500)
+            .json({ message: "❌ Сервер қатесі", error: error.message });
       }
-
-      // Фото
-      let image = "";
-      if (imageUrl) image = imageUrl;
-      if (req.file) image = `/uploads/clinics/${req.file.filename}`;
-
-      // Парсим координаты
-      const location = parseLocation(req.body);
-
-      // Клиника жасау
-      const clinic = await Clinic.create({
-        name,
-        email,
-        address,
-        phone,
-        description,
-        image,
-        owner: owner._id,
-        location,
-      });
-
-      res.status(201).json({
-        message: "✅ Клиника құрылды",
-        clinic,
-        ownerTempPassword: tempPass || null,
-      });
-    } catch (error) {
-      console.error("CREATE CLINIC ERROR:", error);
-      res
-        .status(500)
-        .json({ message: "❌ Сервер қатесі", error: error.message });
     }
-  }
 );
 
 /** ========== OWNER: өз клиникасын өңдеу ========== */
 router.put(
-  "/:clinicId",
-  auth,
-  requireRole("owner"),
-  upload.single("image"),
-  async (req, res) => {
-    try {
-      const clinic = await Clinic.findById(req.params.clinicId);
-      if (!clinic)
-        return res.status(404).json({ message: "Клиника табылмады" });
+    "/:clinicId",
+    auth('owner'),
+    upload.single("image"),
+    async (req, res) => {
+      try {
+        const clinic = await Clinic.findById(req.params.clinicId);
+        if (!clinic)
+          return res.status(404).json({ message: "Клиника табылмады" });
 
-      if (String(clinic.owner) !== String(req.user.id)) {
-        return res.status(403).json({ message: "Тек иесі өңдей алады ❌" });
+        if (String(clinic.owner) !== String(req.user.id)) {
+          return res.status(403).json({ message: "Тек иесі өңдей алады ❌" });
+        }
+
+        const { address, phone, description } = req.body;
+        clinic.address = address ?? clinic.address;
+        clinic.phone = phone ?? clinic.phone;
+        clinic.description = description ?? clinic.description;
+
+        if (req.file) {
+          clinic.image = /uploads/clinics/${req.file.filename};
+        } else if (req.body.image) {
+          clinic.image = req.body.image;
+        }
+
+        // update location if provided
+        const newLoc = parseLocation(req.body);
+        if (newLoc) clinic.location = newLoc;
+
+        await clinic.save();
+
+        res.json({ message: "✅ Клиника деректері жаңартылды", clinic });
+      } catch (error) {
+        console.error("UPDATE CLINIC ERROR:", error);
+        res
+            .status(500)
+            .json({ message: "❌ Сервер қатесі", error: error.message });
       }
-
-      const { address, phone, description } = req.body;
-      clinic.address = address ?? clinic.address;
-      clinic.phone = phone ?? clinic.phone;
-      clinic.description = description ?? clinic.description;
-
-      if (req.file) {
-        clinic.image = `/uploads/clinics/${req.file.filename}`;
-      } else if (req.body.image) {
-        clinic.image = req.body.image;
-      }
-
-      // update location if provided
-      const newLoc = parseLocation(req.body);
-      if (newLoc) clinic.location = newLoc;
-
-      await clinic.save();
-
-      res.json({ message: "✅ Клиника деректері жаңартылды", clinic });
-    } catch (error) {
-      console.error("UPDATE CLINIC ERROR:", error);
-      res
-        .status(500)
-        .json({ message: "❌ Сервер қатесі", error: error.message });
     }
-  }
 );
 
 export default router;

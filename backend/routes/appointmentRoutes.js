@@ -43,9 +43,9 @@ router.post("/", auth(), async (req, res) => {
 router.get("/me", auth(), async (req, res) => {
   try {
     const items = await Appointment.find({ patient: req.user.id })
-      .populate("clinic", "name address phone image")
-      .sort({ createdAt: -1 })
-      .lean();
+        .populate("clinic", "name address phone image")
+        .sort({ createdAt: -1 })
+        .lean();
     res.json(items);
   } catch (e) {
     console.error("Get my appointments error:", e);
@@ -57,15 +57,15 @@ router.get("/me", auth(), async (req, res) => {
 router.get("/:id", auth(), async (req, res) => {
   try {
     const item = await Appointment.findById(req.params.id)
-      .populate("clinic", "name address phone image")
-      .populate("patient", "fullName email");
+        .populate("clinic", "name address phone image")
+        .populate("patient", "fullName email");
     if (!item)
       return res.status(404).json({ message: "Appointment not found" });
 
     // позволяем получить если владелец или админ
     if (
-      item.patient._id.toString() !== req.user.id &&
-      req.user.role !== "admin"
+        item.patient._id.toString() !== req.user.id &&
+        req.user.role !== "admin"
     ) {
       return res.status(403).json({ message: "Рұқсат жоқ" });
     }
@@ -93,9 +93,9 @@ router.delete("/:id", auth(), async (req, res) => {
 
     // опционально: вернуть оставшиеся записи пациента
     const remaining = await Appointment.find({ patient: req.user.id })
-      .populate("clinic", "name address phone image")
-      .sort({ createdAt: -1 })
-      .lean();
+        .populate("clinic", "name address phone image")
+        .sort({ createdAt: -1 })
+        .lean();
 
     res.json({ message: "Deleted", remaining });
   } catch (e) {
@@ -103,5 +103,59 @@ router.delete("/:id", auth(), async (req, res) => {
     res.status(500).json({ message: "Қате орын алды", detail: e.message });
   }
 });
+// OWNER: получить все записи его клиник
+router.get("/owner/mine", auth('owner'), async (req, res) => {
+  try {
+    // находим все клиники владельца
+    const clinics = await Clinic.find({ owner: req.user.id }).select("_id");
 
+    if (!clinics.length) {
+      return res.json([]);
+    }
+
+    const clinicIds = clinics.map(c => c._id);
+
+    // находим записи по этим клиникам
+    const items = await Appointment.find({ clinic: { $in: clinicIds } })
+        .populate("patient", "fullName email")
+        .populate("clinic", "name")
+        .sort({ createdAt: -1 });
+
+    res.json(items);
+  } catch (e) {
+    console.error("Owner appointments error:", e);
+    res.status(500).json({ message: "Server error", detail: e.message });
+  }
+});
+
+
+// OWNER: завершить запись (done)
+router.patch("/:id/done", auth("owner"), async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const update = {
+      performedWork: req.body.performedWork,
+      price: req.body.price,
+      doctorName: req.body.doctorName,
+      tooth: req.body.tooth,
+      recommendations: req.body.recommendations,
+      status: "done",
+      completedAt: new Date(),
+    };
+
+    const appt = await Appointment.findByIdAndUpdate(id, update, {
+      new: true,
+    });
+
+    if (!appt) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    res.json(appt);
+  } catch (e) {
+    console.error("Finalize error:", e);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 export default router;
