@@ -56,7 +56,7 @@ const parseLocation = (body) => {
 };
 
 /** ========== OWNER: өз клиникаларының тізімі ========== */
-router.get("/owner/mine/list", auth, requireRole("owner"), async (req, res) => {
+router.get("/owner/mine/list", auth("owner"), async (req, res) => {
   try {
     const clinics = await Clinic.find({ owner: req.user.id })
       .select("-__v")
@@ -68,7 +68,7 @@ router.get("/owner/mine/list", auth, requireRole("owner"), async (req, res) => {
 });
 
 /** ========== ✅ КЛИНИКА: өзіне тіркелген пациенттердің тізімі ========== */
-router.get("/patients", auth, requireRole("clinic"), async (req, res) => {
+router.get("/patients", auth("clinic"), async (req, res) => {
   try {
     const appointments = await Appointment.find({ clinic: req.user.id })
       .populate("patient", "fullName email")
@@ -124,8 +124,7 @@ router.get("/:email", async (req, res) => {
 /** ========== ADMIN: жаңа клиника қосу ========== */
 router.post(
   "/",
-  auth,
-  requireRole("admin"),
+  auth("admin"),
   upload.single("image"),
   async (req, res) => {
     try {
@@ -210,8 +209,7 @@ router.post(
 /** ========== OWNER: өз клиникасын өңдеу ========== */
 router.put(
   "/:clinicId",
-  auth,
-  requireRole("owner"),
+  auth("owner"),
   upload.single("image"),
   async (req, res) => {
     try {
