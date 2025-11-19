@@ -128,22 +128,22 @@ const OwnerClinics = () => {
                 </p>
               </div>
 
-              <Link
-                to={/owner/clinics/${c._id}/appointments}
-                style={{
-                  display: "inline-block",
-                  textAlign: "center",
-                  background: "linear-gradient(135deg, #0077b6, #00b4d8)",
-                  color: "white",
-                  padding: "10px 16px",
-                  borderRadius: "10px",
-                  textDecoration: "none",
-                  fontWeight: "600",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                Өтініштерді қарау
-              </Link>
+                <Link
+                    to={`/owner/clinics/${c._id}/appointments`}
+                    style={{
+                        display: "inline-block",
+                        textAlign: "center",
+                        background: "linear-gradient(135deg, #0077b6, #00b4d8)",
+                        color: "white",
+                        padding: "10px 16px",
+                        borderRadius: "10px",
+                        textDecoration: "none",
+                        fontWeight: "600",
+                        transition: "all 0.2s ease",
+                    }}
+                >
+                    Өтініштерді қарау
+                </Link>
             </motion.div>
           ))}
         </div>
