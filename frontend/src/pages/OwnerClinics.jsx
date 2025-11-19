@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import api, { authHeaders } from "../helpers/api";
+import axios, { authHeaders } from "../helpers/api";
 import { motion } from "framer-motion";
 import { FaClinicMedical, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
 
@@ -10,26 +10,16 @@ const OwnerClinics = () => {
 
   useEffect(() => {
     if (!user || user.role !== "owner") return;
-
-    const load = async () => {
-      try {
-        const res = await api.get("/api/clinics/owner/mine/list", {
-          headers: authHeaders(),
-        });
-        setList(res.data || []);
-      } catch (err) {
-        console.error("[OwnerClinics] load error:", err.response?.data || err);
-        setList([]);
-      }
-    };
-
-    load();
+    axios
+      .get("/api/clinics/owner/mine/list", { headers: authHeaders() })
+      .then((res) => setList(res.data || []))
+      .catch((err) => console.error(err.response?.data || err));
   }, [user]);
 
   if (!user || user.role !== "owner") {
     return (
       <div className="text-center text-gray-700 mt-20 text-lg">
-        Бұл бет тек клиника иесі үшін 🧑‍⚕️
+        Бұл бет тек клиника иесі үшін 🧑‍⚕
       </div>
     );
   }
@@ -139,7 +129,7 @@ const OwnerClinics = () => {
               </div>
 
               <Link
-                to={`/owner/clinics/${c._id}/appointments`}
+                to={/owner/clinics/${c._id}/appointments}
                 style={{
                   display: "inline-block",
                   textAlign: "center",
